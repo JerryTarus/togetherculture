@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Together Culture CRM</title>
+  <link rel="icon" href="images/tfav.png">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- LEFT PANEL: Login & Registration -->
+    <div class="left-panel">
+      <div class="header">
+        <img src="images/tlogo.png" alt="Logo" class="logo">
+        <h1 class="site-title gradient-text">Together Culture</h1>
+        <p class="subtitle">Creative Community CRM</p>
+      </div>
+      <div class="tab-buttons">
+        <button id="loginTab" class="tab active">Login</button>
+        <button id="registerTab" class="tab">Register</button>
+      </div>
+      <div class="form-wrapper">
+        <!-- LOGIN FORM -->
+        <form id="loginForm" class="form active">
+          <div class="input-group">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+          </div>
+          <div class="input-group">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+          </div>
+          <div class="input-group role-toggle">
+            <label>
+              <input type="radio" name="loginRole" value="member" checked> Member Login
+            </label>
+            <label>
+              <input type="radio" name="loginRole" value="admin"> Admin Login
+            </label>
+          </div>
+          <button type="submit" class="btn">Login</button>
+          <p id="loginMessage" class="form-message"></p>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" class="form">
+          <div class="input-group">
+            <label for="regName">Full Name:</label>
+            <input type="text" id="regName" name="name" placeholder="Enter your full name" required>
+          </div>
+          <div class="input-group">
+            <label for="regEmail">Email:</label>
+            <input type="email" id="regEmail" name="email" placeholder="Enter your email" required>
+          </div>
+          <div class="input-group">
+            <label for="regPassword">Password:</label>
+            <input type="password" id="regPassword" name="password" placeholder="Enter your password" required>
+          </div>
+          <div class="input-group role-toggle">
+            <label>
+              <input type="radio" name="regRole" value="member" checked> Register as Member
+            </label>
+            <label>
+              <input type="radio" name="regRole" value="admin"> Register as Admin
+            </label>
+          </div>
+          <!-- Extra fields for member registration -->
+          <div id="memberExtraFields">
+            <div class="input-group">
+              <label for="membershipType">Membership Type:</label>
+              <select id="membershipType" name="membershipType">
+                <option value="Community Member">Community Member</option>
+                <option value="Key Access Member">Key Access Member</option>
+                <option value="Creative Workspace Member">Creative Workspace Member</option>
+              </select>
+            </div>
+            <fieldset class="input-group">
+              <legend>Select Your Interests:</legend>
+              <label><input type="checkbox" name="interests" value="caring"> Caring</label>
+              <label><input type="checkbox" name="interests" value="sharing"> Sharing</label>
+              <label><input type="checkbox" name="interests" value="creating"> Creating</label>
+              <label><input type="checkbox" name="interests" value="experiencing"> Experiencing</label>
+              <label><input type="checkbox" name="interests" value="working"> Working</label>
+            </fieldset>
+          </div>
+          <button type="submit" class="btn">Register</button>
+          <p id="registerMessage" class="form-message"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Community Information -->
+    <div class="right-panel">
+      <h2 class="community-title">Together Culture Community</h2>
+      <p class="community-description">
+        Join a dynamic community dedicated to creative expression and collaboration.
+        Together Culture offers exclusive resources, creative workspace, mentorship,
+        and a modern platform for change.
+      </p>
+      <ul class="features">
+        <li>Exclusive creative workspace</li>
+        <li>Mentorship and skill development</li>
+        <li>Community events and networking</li>
+        <li>User-centric CRM functionalities</li>
+      </ul>
+    </div>
+  </div>
+  <script src="js/script.js"></script>
+</body>
+</html>

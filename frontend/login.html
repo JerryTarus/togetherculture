@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Together Culture CRM</title>
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <img src="images/logo.png" alt="Together Culture Logo" class="logo">
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="form-container">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email:</label>
+          <input type="email" id="loginEmail" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password:</label>
+          <input type="password" id="loginPassword" name="password" required>
+        </div>
+        <!-- Role toggle: choose between Member and Admin login -->
+        <div class="form-group role-toggle">
+          <label>
+            <input type="radio" name="loginRole" value="member" checked> Member Login
+          </label>
+          <label>
+            <input type="radio" name="loginRole" value="admin"> Admin Login
+          </label>
+        </div>
+        <button type="submit" class="btn">Login</button>
+        <p id="loginMessage" class="error"></p>
+      </form>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Together Culture</p>
+  </footer>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const loginRole = document.querySelector('input[name="loginRole"]:checked').value;
+      
+      try {
+        const response = await fetch('http://localhost:3000/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          // Check if the returned user role matches the selected login type
+          if (data.user.role !== loginRole) {
+            document.getElementById('loginMessage').textContent = `Please use the ${data.user.role} login portal.`;
+            return;
+          }
+          // Save token and user info in localStorage
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          // Redirect to appropriate dashboard
+          if (data.user.role === 'admin') {
+            window.location.href = 'adminDashboard.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+        } else {
+          document.getElementById('loginMessage').textContent = data.message || 'Login failed';
+        }
+      } catch (error) {
+        document.getElementById('loginMessage').textContent = 'An error occurred. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

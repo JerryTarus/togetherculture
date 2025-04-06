@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard - Together Culture CRM</title>
+  <link rel="icon" href="images/tfav.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <img src="images/tlogo.png" alt="Together Culture Logo" class="logo">
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class="admin-dashboard">
+      <h2>Admin Dashboard</h2>
+      
+      <div id="pendingUsers">
+        <h3>Pending User Approvals</h3>
+        <p>Loading pending users...</p>
+      </div>
+      
+      <div id="manageUsers">
+        <h3>Manage Users</h3>
+        <div id="allUsers">
+          <p>Loading all users...</p>
+        </div>
+      </div>
+      
+      <div id="createModule">
+        <h3>Create New Module</h3>
+        <form id="createModuleForm">
+          <div class="input-group">
+            <label for="moduleTitle">Module Title:</label>
+            <input type="text" id="moduleTitle" required>
+          </div>
+          <div class="input-group">
+            <label for="moduleDescription">Description:</label>
+            <textarea id="moduleDescription" required></textarea>
+          </div>
+          <button type="submit" class="btn">Create Module</button>
+        </form>
+        <p id="adminMessage"></p>
+      </div>
+      
+      <!-- New Module Enrollment Section -->
+      <div id="moduleEnrollments">
+        <h3>Module Enrollments</h3>
+        <p>Loading enrollment data...</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Together Culture</p>
+  </footer>
+  <script>
+    // Admin logout.
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    });
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'index.html';
+
+    // Fetch pending users.
+    fetch('http://localhost:3000/admin/pending-users', {
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const pendingDiv = document.getElementById('pendingUsers');
+      if (data.length === 0) {
+        pendingDiv.innerHTML += '<p>No pending users.</p>';
+      } else {
+        pendingDiv.innerHTML = data.map(u => `
+          <div class="pending-user">
+            <p>${u.name} (${u.email})</p>
+            <button onclick="approveUser(${u.id})" class="btn">Approve</button>
+          </div>
+        `).join('');
+      }
+    })
+    .catch(err => {
+      document.getElementById('adminMessage').textContent = 'Failed to load pending users.';
+    });
+
+    // Fetch all users.
+    fetch('http://localhost:3000/admin/users', {
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => res.json())
+    .then(users => {
+      const allUsersDiv = document.getElementById('allUsers');
+      if (users.length === 0) {
+        allUsersDiv.innerHTML = '<p>No users found.</p>';
+      } else {
+        allUsersDiv.innerHTML = users.map(u => `
+          <div class="user">
+            <p>${u.name} (${u.email}) - Role: ${u.role} - Approved: ${u.isApproved}</p>
+            ${u.isApproved == 0 && u.role !== 'admin' ? `<button onclick="approveUser(${u.id})" class="btn">Approve</button>` : ''}
+            ${u.isApproved == 1 && u.role !== 'admin' ? `<button onclick="unapproveUser(${u.id})" class="btn">Unapprove</button>` : ''}
+            <select id="roleSelect${u.id}">
+              <option value="member" ${u.role === 'member' ? 'selected' : ''}>Member</option>
+              <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+            </select>
+            <button onclick="updateUserRole(${u.id})" class="btn">Update Role</button>
+            <button onclick="deleteUser(${u.id})" class="btn">Delete</button>
+          </div>
+        `).join('');
+      }
+    })
+    .catch(err => {
+      document.getElementById('adminMessage').textContent = 'Failed to load users.';
+    });
+
+    // Fetch module enrollment summary.
+    fetch('http://localhost:3000/admin/module-enrollments', {
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const enrollmentDiv = document.getElementById('moduleEnrollments');
+      if (data.length === 0) {
+        enrollmentDiv.innerHTML = '<p>No enrollment data available.</p>';
+      } else {
+        enrollmentDiv.innerHTML = data.map(mod => `
+          <div class="module-enrollment">
+            <h4>${mod.title}</h4>
+            <p>${mod.description}</p>
+            <p>Bookings: ${mod.bookingCount || 0}</p>
+            <p>Booked By: ${mod.bookedBy ? mod.bookedBy : 'N/A'}</p>
+          </div>
+        `).join('');
+      }
+    })
+    .catch(err => {
+      document.getElementById('adminMessage').textContent = 'Failed to load module enrollments.';
+    });
+
+    // Approve user.
+    window.approveUser = async function(userId) {
+      try {
+        const res = await fetch(`http://localhost:3000/admin/approve-user/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+        });
+        const result = await res.json();
+        alert(result.message);
+        window.location.reload();
+      } catch (error) {
+        alert('Failed to approve user.');
+      }
+    };
+
+    // Unapprove user.
+    window.unapproveUser = async function(userId) {
+      try {
+        const res = await fetch(`http://localhost:3000/admin/unapprove-user/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+        });
+        const result = await res.json();
+        alert(result.message);
+        window.location.reload();
+      } catch (error) {
+        alert('Failed to unapprove user.');
+      }
+    };
+
+    // Delete user.
+    window.deleteUser = async function(userId) {
+      if (!confirm('Are you sure you want to delete this user?')) return;
+      try {
+        const res = await fetch(`http://localhost:3000/admin/delete-user/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+        });
+        const result = await res.json();
+        alert(result.message);
+        window.location.reload();
+      } catch (error) {
+        alert('Failed to delete user.');
+      }
+    };
+
+    // Update user role.
+    window.updateUserRole = async function(userId) {
+      const newRole = document.getElementById('roleSelect' + userId).value;
+      try {
+        const res = await fetch(`http://localhost:3000/admin/update-user-role/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ role: newRole })
+        });
+        const result = await res.json();
+        alert(result.message);
+        window.location.reload();
+      } catch (error) {
+        alert('Failed to update user role.');
+      }
+    };
+
+    // Create module.
+    document.getElementById('createModuleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('moduleTitle').value;
+      const description = document.getElementById('moduleDescription').value;
+      try {
+        const res = await fetch('http://localhost:3000/admin/create-module', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ title, description })
+        });
+        const result = await res.json();
+        alert(result.message);
+        window.location.reload();
+      } catch (error) {
+        alert('Module creation failed.');
+      }
+    });
+  </script>
+</body>
+</html>

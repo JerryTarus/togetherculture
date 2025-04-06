@@ -1,0 +1,239 @@
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+  .left-panel, .right-panel {
+    width: 100%;
+    padding: 20px;
+  }
+  nav ul {
+    justify-content: center;
+  }
+}
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Global Styles */
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #f2f2f2;
+  color: #333;
+}
+
+/* Container */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Left Panel */
+.left-panel {
+  flex: 1;
+  background: #fff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.left-panel .header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.left-panel .logo {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.site-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(90deg, #0066ff, #ff66cc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Tab Buttons */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background: #eaeaea;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+  margin: 0 5px;
+}
+
+.tab.active {
+  background: #1f1f2e;
+  color: #fff;
+}
+
+/* Form Wrapper & Forms */
+.form-wrapper {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form {
+  display: none;
+  flex-direction: column;
+}
+
+.form.active {
+  display: flex;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.role-toggle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.role-toggle label {
+  font-size: 0.9rem;
+}
+
+.btn {
+  background: #1f1f2e;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #ff66cc;
+}
+
+.form-message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: red;
+  text-align: center;
+}
+
+/* Right Panel */
+.right-panel {
+  flex: 1;
+  background: #1f1f2e;
+  padding: 40px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.community-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #00a8ff;
+}
+
+.community-description {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.features {
+  list-style: none;
+}
+
+.features li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #00a8ff;
+  font-weight: bold;
+}
+
+/* Header and Footer */
+header, footer {
+  background: #1f1f2e;
+  color: #fff;
+  padding: 10px 20px;
+}
+
+header .logo {
+  height: 50px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+}
+
+nav ul li {
+  margin-left: 10px;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Dashboard Specific */
+.admin-dashboard, .member-dashboard {
+  background: #fff;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}

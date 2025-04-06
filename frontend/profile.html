@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile - Together Culture CRM</title>
+  <link rel="icon" href="images/tfav.png">
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <style>
+    
+    .profile-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .profile-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .profile-container .input-group {
+      margin-bottom: 15px;
+    }
+    .profile-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+    }
+    .profile-container input,
+    .profile-container select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    fieldset {
+      margin-bottom: 15px;
+    }
+    fieldset legend {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .profile-message {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: green;
+    }
+  </style>
+
+</head>
+<body>
+  <header>
+    <img src="images/tlogo.png" alt="Together Culture Logo" class="logo">
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+        <li><a href="profile.html" class="active">My Profile</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="profile-container">
+      <h2>My Profile</h2>
+      <form id="profileForm">
+        <div class="input-group">
+          <label for="profileName">Full Name:</label>
+          <input type="text" id="profileName" name="name" required>
+        </div>
+        <div class="input-group">
+          <label for="profileMembershipType">Membership Type:</label>
+          <select id="profileMembershipType" name="membershipType">
+            <option value="Community Member">Community Member</option>
+            <option value="Key Access Member">Key Access Member</option>
+            <option value="Creative Workspace Member">Creative Workspace Member</option>
+          </select>
+        </div>
+        <fieldset class="input-group">
+          <legend>Select Your Interests:</legend>
+          <label><input type="checkbox" name="interests" value="caring"> Caring</label>
+          <label><input type="checkbox" name="interests" value="sharing"> Sharing</label>
+          <label><input type="checkbox" name="interests" value="creating"> Creating</label>
+          <label><input type="checkbox" name="interests" value="experiencing"> Experiencing</label>
+          <label><input type="checkbox" name="interests" value="working"> Working</label>
+        </fieldset>
+        <button type="submit" class="btn">Update Profile</button>
+      </form>
+      <p id="profileMessage" class="profile-message"></p>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Together Culture</p>
+  </footer>
+  <script>
+    // Logout functionality.
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    });
+
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'index.html';
+
+    // Function to load profile data.
+    async function loadProfile() {
+      try {
+        const res = await fetch('http://localhost:3000/member/profile', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        const profile = await res.json();
+        // This populates the form fields.
+        document.getElementById('profileName').value = profile.name || '';
+        document.getElementById('profileMembershipType').value = profile.membershipType || 'Community Member';
+        // Set interests checkboxes.
+        const interests = ['caring', 'sharing', 'creating', 'experiencing', 'working'];
+        interests.forEach(interest => {
+          const checkbox = document.querySelector(`input[name="interests"][value="${interest}"]`);
+          if (profile[interest] && parseInt(profile[interest]) === 1) {
+            checkbox.checked = true;
+          } else {
+            checkbox.checked = false;
+          }
+        });
+      } catch (err) {
+        document.getElementById('profileMessage').textContent = 'Failed to load profile.';
+      }
+    }
+    loadProfile();
+
+    // Handle profile form submission.
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('profileName').value;
+      const membershipType = document.getElementById('profileMembershipType').value;
+      let interests = {};
+      ['caring', 'sharing', 'creating', 'experiencing', 'working'].forEach(interest => {
+        const checkbox = document.querySelector(`input[name="interests"][value="${interest}"]`);
+        interests[interest] = checkbox.checked ? 1 : 0;
+      });
+      try {
+        const res = await fetch('http://localhost:3000/member/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ name, membershipType, interests })
+        });
+        const result = await res.json();
+        document.getElementById('profileMessage').textContent = result.message;
+        
+        loadProfile();
+      } catch (error) {
+        document.getElementById('profileMessage').textContent = 'An error occurred: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
